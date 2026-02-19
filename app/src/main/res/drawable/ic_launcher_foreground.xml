@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Indigo check mark icon for Habit Tracker -->
+    <path
+        android:fillColor="#6366F1"
+        android:pathData="M54,28 C39.64,28 28,39.64 28,54 C28,68.36 39.64,80 54,80 C68.36,80 80,68.36 80,54 C80,39.64 68.36,28 54,28z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48.5,62.5 L41,55 L43.5,52.5 L48.5,57.5 L64.5,41.5 L67,44 Z"
+        android:strokeWidth="0"/>
+</vector>
