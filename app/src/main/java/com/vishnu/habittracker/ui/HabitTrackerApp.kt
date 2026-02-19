@@ -1,5 +1,7 @@
 package com.vishnu.habittracker.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material.icons.outlined.TrackChanges
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -24,15 +27,21 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.vishnu.habittracker.data.repository.AuthState
+import com.vishnu.habittracker.ui.auth.AuthViewModel
+import com.vishnu.habittracker.ui.auth.LoginScreen
 import com.vishnu.habittracker.ui.navigation.Screen
 
 /**
@@ -46,11 +55,45 @@ data class BottomNavItem(
 )
 
 /**
- * Main app composable with bottom navigation and navigation host.
- * Maps to the webapp's 7-tab navigation bar.
+ * Root app composable with auth guard.
+ *
+ * Auth flow (ported from auth.js):
+ * - Loading → Splash/spinner
+ * - Unauthenticated → LoginScreen
+ * - Authenticated → Main app with bottom nav
  */
 @Composable
 fun HabitTrackerApp() {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val authState by authViewModel.authState.collectAsState()
+
+    when (authState) {
+        is AuthState.Loading -> {
+            // Loading — show centered spinner
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            }
+        }
+        is AuthState.Unauthenticated, is AuthState.Error -> {
+            // Not logged in — show login screen
+            LoginScreen(viewModel = authViewModel)
+        }
+        is AuthState.Authenticated -> {
+            // Logged in — show main app
+            MainAppContent(authViewModel = authViewModel)
+        }
+    }
+}
+
+/**
+ * Main app content with bottom navigation.
+ * Only shown when authenticated.
+ */
+@Composable
+private fun MainAppContent(authViewModel: AuthViewModel) {
     val navController = rememberNavController()
 
     val bottomNavItems = listOf(
@@ -68,9 +111,8 @@ fun HabitTrackerApp() {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
 
-            // Hide bottom bar in full-screen modes (focus, auth)
+            // Hide bottom bar in full-screen modes (focus mode)
             val showBottomBar = currentDestination?.route?.let { route ->
-                route != Screen.Auth.route &&
                 !route.startsWith("focus/")
             } ?: true
 
@@ -122,7 +164,10 @@ fun HabitTrackerApp() {
         ) {
             // Placeholder screens — will be replaced with full implementations
             composable(Screen.Dashboard.route) {
-                PlaceholderScreen("Dashboard", "📋 Tasks & Time Blocks")
+                PlaceholderScreen(
+                    "Dashboard",
+                    "📋 Welcome, ${authViewModel.getCurrentUserEmail() ?: "User"}!"
+                )
             }
             composable(Screen.Habits.route) {
                 PlaceholderScreen("Habits", "⭐ Daily Habit Tracking")
