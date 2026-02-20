@@ -49,6 +49,7 @@ import com.vishnu.habittracker.ui.events.EventsScreen
 import com.vishnu.habittracker.ui.expenses.ExpensesScreen
 import com.vishnu.habittracker.ui.goals.GoalsScreen
 import com.vishnu.habittracker.ui.habits.HabitsScreen
+import com.vishnu.habittracker.ui.habits.HabitProgressScreen
 import com.vishnu.habittracker.ui.focus.FocusScreen
 import com.vishnu.habittracker.ui.navigation.Screen
 import androidx.navigation.NavType
@@ -178,6 +179,13 @@ private fun MainAppContent(authViewModel: AuthViewModel) {
             }
             composable(Screen.Habits.route) {
                 HabitsScreen()
+            }
+            composable(
+                route = Screen.HabitProgress.route,
+                arguments = listOf(navArgument("habitId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val habitId = backStackEntry.arguments?.getString("habitId") ?: ""
+                HabitProgressScreen(habitId = habitId, onBack = { navController.popBackStack() })
             }
             composable(Screen.Goals.route) {
                 GoalsScreen()
