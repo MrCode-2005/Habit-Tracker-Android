@@ -49,7 +49,10 @@ import com.vishnu.habittracker.ui.events.EventsScreen
 import com.vishnu.habittracker.ui.expenses.ExpensesScreen
 import com.vishnu.habittracker.ui.goals.GoalsScreen
 import com.vishnu.habittracker.ui.habits.HabitsScreen
+import com.vishnu.habittracker.ui.focus.FocusScreen
 import com.vishnu.habittracker.ui.navigation.Screen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 /**
  * Bottom navigation item data class.
@@ -190,6 +193,13 @@ private fun MainAppContent(authViewModel: AuthViewModel) {
             }
             composable(Screen.Expenses.route) {
                 ExpensesScreen()
+            }
+            composable(
+                route = Screen.FocusMode.route,
+                arguments = listOf(navArgument("taskId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val taskId = backStackEntry.arguments?.getString("taskId") ?: ""
+                FocusScreen(taskId = taskId, onBack = { navController.popBackStack() })
             }
         }
     }
