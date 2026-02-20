@@ -43,6 +43,8 @@ import com.vishnu.habittracker.data.repository.AuthState
 import com.vishnu.habittracker.ui.auth.AuthViewModel
 import com.vishnu.habittracker.ui.auth.LoginScreen
 import com.vishnu.habittracker.ui.dashboard.DashboardScreen
+import com.vishnu.habittracker.ui.goals.GoalsScreen
+import com.vishnu.habittracker.ui.habits.HabitsScreen
 import com.vishnu.habittracker.ui.navigation.Screen
 
 /**
@@ -168,10 +170,10 @@ private fun MainAppContent(authViewModel: AuthViewModel) {
                 DashboardScreen()
             }
             composable(Screen.Habits.route) {
-                PlaceholderScreen("Habits", "⭐ Daily Habit Tracking")
+                HabitsScreen()
             }
             composable(Screen.Goals.route) {
-                PlaceholderScreen("Goals", "🏆 Long-term Objectives")
+                GoalsScreen()
             }
             composable(Screen.Events.route) {
                 PlaceholderScreen("Events", "📅 Event Countdowns")
