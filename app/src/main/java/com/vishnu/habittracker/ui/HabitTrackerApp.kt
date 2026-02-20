@@ -42,6 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import com.vishnu.habittracker.data.repository.AuthState
 import com.vishnu.habittracker.ui.auth.AuthViewModel
 import com.vishnu.habittracker.ui.auth.LoginScreen
+import com.vishnu.habittracker.ui.dashboard.DashboardScreen
 import com.vishnu.habittracker.ui.navigation.Screen
 
 /**
@@ -164,10 +165,7 @@ private fun MainAppContent(authViewModel: AuthViewModel) {
         ) {
             // Placeholder screens — will be replaced with full implementations
             composable(Screen.Dashboard.route) {
-                PlaceholderScreen(
-                    "Dashboard",
-                    "📋 Welcome, ${authViewModel.getCurrentUserEmail() ?: "User"}!"
-                )
+                DashboardScreen()
             }
             composable(Screen.Habits.route) {
                 PlaceholderScreen("Habits", "⭐ Daily Habit Tracking")
