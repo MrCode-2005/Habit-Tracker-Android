@@ -164,7 +164,7 @@ private fun CategoryTabs(current: String, onChange: (String) -> Unit) {
 private fun ExpenseCard(expense: ExpenseEntity, viewModel: ExpenseViewModel) {
     val cat = categoryMap[expense.category]
     val color = cat?.color ?: HabitTrackerColors.Primary
-    val formatted = try { LocalDate.parse(expense.expenseDate.take(10)).format(DateTimeFormatter.ofPattern("d MMM yyyy")) } catch (e: Exception) { expense.expenseDate }
+    val formatted = try { LocalDate.parse(expense.date.take(10)).format(DateTimeFormatter.ofPattern("d MMM yyyy")) } catch (e: Exception) { expense.date }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -190,9 +190,9 @@ private fun ExpenseCard(expense: ExpenseEntity, viewModel: ExpenseViewModel) {
                     Icon(Icons.Outlined.CalendarToday, null, modifier = Modifier.size(12.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(formatted, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    if (!expense.note.isNullOrBlank()) {
+                    if (!expense.description.isNullOrBlank()) {
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(expense.note, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(expense.description, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                 }
             }
@@ -259,9 +259,9 @@ private fun AddExpenseSheet(viewModel: ExpenseViewModel) {
             }
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Note
+            // Description
             OutlinedTextField(
-                value = formState.note, onValueChange = { viewModel.updateNote(it) },
+                value = formState.description, onValueChange = { viewModel.updateDescription(it) },
                 modifier = Modifier.fillMaxWidth(), label = { Text("Note (optional)") },
                 shape = RoundedCornerShape(12.dp), singleLine = true
             )

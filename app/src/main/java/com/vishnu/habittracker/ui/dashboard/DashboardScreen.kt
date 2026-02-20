@@ -89,7 +89,7 @@ fun DashboardScreen(
                     title = "Morning",
                     emoji = "☀️",
                     timeRange = "6 AM – 12 PM",
-                    accentColor = HabitTrackerColors.MorningBlock,
+                    accentColor = HabitTrackerColors.MorningAccent,
                     tasks = viewModel.getFilteredTasksByBlock(tasks, "morning"),
                     viewModel = viewModel
                 )
@@ -99,7 +99,7 @@ fun DashboardScreen(
                     title = "Evening",
                     emoji = "🌅",
                     timeRange = "12 PM – 6 PM",
-                    accentColor = HabitTrackerColors.EveningBlock,
+                    accentColor = HabitTrackerColors.EveningAccent,
                     tasks = viewModel.getFilteredTasksByBlock(tasks, "evening"),
                     viewModel = viewModel
                 )
@@ -109,7 +109,7 @@ fun DashboardScreen(
                     title = "Night",
                     emoji = "🌙",
                     timeRange = "6 PM – 12 AM",
-                    accentColor = HabitTrackerColors.NightBlock,
+                    accentColor = HabitTrackerColors.NightAccent,
                     tasks = viewModel.getFilteredTasksByBlock(tasks, "night"),
                     viewModel = viewModel
                 )

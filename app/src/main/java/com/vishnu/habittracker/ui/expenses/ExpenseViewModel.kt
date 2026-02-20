@@ -40,8 +40,8 @@ val categoryMap = expenseCategories.associateBy { it.key }
 data class ExpenseFormState(
     val amount: String = "",
     val category: String = "food_outing",
-    val expenseDate: String = LocalDate.now().toString(),
-    val note: String = "",
+    val date: String = LocalDate.now().toString(),
+    val description: String = "",
     val editingExpenseId: String? = null,
     val isSheetOpen: Boolean = false
 )
@@ -58,7 +58,7 @@ class ExpenseViewModel @Inject constructor(
 
     private val userId = authRepository.getCurrentUserId() ?: ""
 
-    val expenses: StateFlow<List<ExpenseEntity>> = expenseRepository.getExpenses(userId)
+    val expenses: StateFlow<List<ExpenseEntity>> = expenseRepository.getActiveExpenses(userId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _currentTab = MutableStateFlow("all")
@@ -78,7 +78,7 @@ class ExpenseViewModel @Inject constructor(
         val dateRange = getDateRange()
         val totals = mutableMapOf("food" to 0.0, "clothing" to 0.0, "transportation" to 0.0, "essentials" to 0.0)
 
-        expenses.filter { !it.isDeleted && isInDateRange(it.expenseDate, dateRange) }.forEach { exp ->
+        expenses.filter { !it.isDeleted && isInDateRange(it.date, dateRange) }.forEach { exp ->
             val amount = exp.amount
             if (exp.category == "food_outing" || exp.category == "food_online") {
                 totals["food"] = (totals["food"] ?: 0.0) + amount
@@ -93,7 +93,7 @@ class ExpenseViewModel @Inject constructor(
     /** Get filtered expenses by tab and time range */
     fun getFilteredExpenses(expenses: List<ExpenseEntity>): List<ExpenseEntity> {
         val dateRange = getDateRange()
-        var filtered = expenses.filter { !it.isDeleted && isInDateRange(it.expenseDate, dateRange) }
+        var filtered = expenses.filter { !it.isDeleted && isInDateRange(it.date, dateRange) }
         val tab = _currentTab.value
         if (tab != "all") {
             filtered = when (tab) {
@@ -101,7 +101,7 @@ class ExpenseViewModel @Inject constructor(
                 else -> filtered.filter { it.category == tab }
             }
         }
-        return filtered.sortedByDescending { it.expenseDate }
+        return filtered.sortedByDescending { it.date }
     }
 
     private fun getDateRange(): Pair<LocalDate, LocalDate> {
@@ -128,8 +128,8 @@ class ExpenseViewModel @Inject constructor(
         _formState.value = ExpenseFormState(
             amount = expense.amount.toString(),
             category = expense.category,
-            expenseDate = expense.expenseDate,
-            note = expense.note ?: "",
+            date = expense.date,
+            description = expense.description ?: "",
             editingExpenseId = expense.id,
             isSheetOpen = true
         )
@@ -137,7 +137,7 @@ class ExpenseViewModel @Inject constructor(
     fun closeSheet() { _formState.value = _formState.value.copy(isSheetOpen = false) }
     fun updateAmount(amount: String) { _formState.value = _formState.value.copy(amount = amount) }
     fun updateCategory(category: String) { _formState.value = _formState.value.copy(category = category) }
-    fun updateNote(note: String) { _formState.value = _formState.value.copy(note = note) }
+    fun updateDescription(desc: String) { _formState.value = _formState.value.copy(description = desc) }
 
     fun saveExpense() {
         val form = _formState.value
@@ -145,14 +145,16 @@ class ExpenseViewModel @Inject constructor(
         viewModelScope.launch {
             if (form.editingExpenseId != null) {
                 val existing = expenses.value.find { it.id == form.editingExpenseId } ?: return@launch
-                expenseRepository.updateExpense(existing.copy(
-                    amount = amount, category = form.category,
-                    expenseDate = form.expenseDate, note = form.note.ifBlank { null }
-                ))
+                // Soft-delete old and add new (since no updateExpense in repo)
+                expenseRepository.softDeleteExpense(existing.id)
+                expenseRepository.addExpense(
+                    userId = userId, amount = amount, category = form.category,
+                    date = form.date, description = form.description.ifBlank { null }
+                )
             } else {
                 expenseRepository.addExpense(
                     userId = userId, amount = amount, category = form.category,
-                    expenseDate = form.expenseDate, note = form.note.ifBlank { null }
+                    date = form.date, description = form.description.ifBlank { null }
                 )
             }
             _formState.value = ExpenseFormState()
