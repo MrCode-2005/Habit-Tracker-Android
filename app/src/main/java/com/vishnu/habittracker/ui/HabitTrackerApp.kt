@@ -51,6 +51,7 @@ import com.vishnu.habittracker.ui.goals.GoalsScreen
 import com.vishnu.habittracker.ui.habits.HabitsScreen
 import com.vishnu.habittracker.ui.habits.HabitProgressScreen
 import com.vishnu.habittracker.ui.focus.FocusScreen
+import com.vishnu.habittracker.ui.settings.SettingsScreen
 import com.vishnu.habittracker.ui.navigation.Screen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -208,6 +209,9 @@ private fun MainAppContent(authViewModel: AuthViewModel) {
             ) { backStackEntry ->
                 val taskId = backStackEntry.arguments?.getString("taskId") ?: ""
                 FocusScreen(taskId = taskId, onBack = { navController.popBackStack() })
+            }
+            composable(Screen.Settings.route) {
+                SettingsScreen(onBack = { navController.popBackStack() })
             }
         }
     }
