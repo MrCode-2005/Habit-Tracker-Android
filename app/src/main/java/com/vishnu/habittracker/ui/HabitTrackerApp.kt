@@ -42,6 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import com.vishnu.habittracker.data.repository.AuthState
 import com.vishnu.habittracker.ui.auth.AuthViewModel
 import com.vishnu.habittracker.ui.auth.LoginScreen
+import com.vishnu.habittracker.ui.analytics.AnalyticsScreen
 import com.vishnu.habittracker.ui.calendar.CalendarScreen
 import com.vishnu.habittracker.ui.dashboard.DashboardScreen
 import com.vishnu.habittracker.ui.events.EventsScreen
@@ -185,7 +186,7 @@ private fun MainAppContent(authViewModel: AuthViewModel) {
                 CalendarScreen()
             }
             composable(Screen.Analytics.route) {
-                PlaceholderScreen("Analytics", "📊 Productivity Insights")
+                AnalyticsScreen()
             }
             composable(Screen.Expenses.route) {
                 ExpensesScreen()
