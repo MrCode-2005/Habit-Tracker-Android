@@ -45,6 +45,7 @@ import com.vishnu.habittracker.ui.auth.LoginScreen
 import com.vishnu.habittracker.ui.calendar.CalendarScreen
 import com.vishnu.habittracker.ui.dashboard.DashboardScreen
 import com.vishnu.habittracker.ui.events.EventsScreen
+import com.vishnu.habittracker.ui.expenses.ExpensesScreen
 import com.vishnu.habittracker.ui.goals.GoalsScreen
 import com.vishnu.habittracker.ui.habits.HabitsScreen
 import com.vishnu.habittracker.ui.navigation.Screen
@@ -187,7 +188,7 @@ private fun MainAppContent(authViewModel: AuthViewModel) {
                 PlaceholderScreen("Analytics", "📊 Productivity Insights")
             }
             composable(Screen.Expenses.route) {
-                PlaceholderScreen("Expenses", "💰 Expense Tracking")
+                ExpensesScreen()
             }
         }
     }
